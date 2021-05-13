@@ -1,0 +1,11 @@
+conf-hosts-and-install-pkg-ldap
+setup-ldap-admin-pass
+setup-ldap-database-3
+user/creat-user
+conf-firewall
+enable-ldap-logging 
+
+
+
+
+hamacho: 451-410-513
