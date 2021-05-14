@@ -1,0 +1,89 @@
+Estos cambios se hacen sobre el archivo que se encuentra /etc/bacula/bacula-dir.conf
+se puede usar un:
+"sudo nano /etc/bacula/bacula-dir.conf"
+con un 
+"sudo bacula-dir -tc /etc/bacula/bacula-dir.conf"
+se verifican si existen errores de syntax
+
+=============================================================
+Director {                            # define myself
+  Name = bacula-dir
+  DIRport = 9101                # where we listen for UA connections
+  QueryFile = "/etc/bacula/query.sql"
+  WorkingDirectory = "/var/spool/bacula"
+  PidDirectory = "/var/run"
+  Maximum Concurrent Jobs = 1
+  Password = "@@DIR_PASSWORD@@"         # Console password
+  Messages = Daemon
+  DirAddress = 127.0.0.1
+}
+=============================================================
+Job {
+  Name = "BackupLocalFiles"
+  JobDefs = "DefaultJob"
+}
+=============================================================
+Job {
+  Name = "RestoreLocalFiles"
+  Type = Restore
+  Client=BackupServer-fd
+  FileSet="Full Set"
+  Storage = File
+  Pool = Default
+  Messages = Standard
+  Where = /bacula/restore
+}
+
+=============================================================
+FileSet {
+  Name = "Full Set"
+  Include {
+    Options {
+      signature = MD5
+      compression = GZIP
+    }
+File = /
+}
+  Exclude {
+    File = /var/lib/bacula
+    File = /proc
+    File = /tmp
+    File = /.journal
+    File = /.fsck
+    File = /bacula
+  }
+}
+
+=============================================================
+Storage {
+  Name = File
+# Do not use "localhost" here
+  Address = backup_server_private_FQDN                # N.B. Use a fully qualified name here
+  SDPort = 9103
+  Password = "@@SD_PASSWORD@@"
+  Device = FileStorage
+  Media Type = File
+}
+
+=============================================================
+# Generic catalog service
+Catalog {
+  Name = MyCatalog
+# Uncomment the following line if you want the dbi driver
+# dbdriver = "dbi:postgresql"; dbaddress = 127.0.0.1; dbport =
+  dbname = "bacula"; dbuser = "bacula"; dbpassword = "bacula_db_password"
+}
+
+
+=============================================================
+# File Pool definition
+Pool {
+  Name = File
+  Pool Type = Backup
+  Label Format = Local-
+  Recycle = yes                       # Bacula can automatically recycle Volumes
+  AutoPrune = yes                     # Prune expired volumes
+  Volume Retention = 365 days         # one year
+  Maximum Volume Bytes = 50G          # Limit Volume size to something reasonable
+  Maximum Volumes = 100               # Limit number of Volumes in Pool
+}

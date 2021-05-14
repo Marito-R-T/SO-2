@@ -1,0 +1,27 @@
+Estos cambios se hacen sobre el archivo que se encuentra /etc/bacula/bacula-sd.conf
+se puede usar un:
+"sudo nano /etc/bacula/bacula-sd.conf"
+con un 
+"sudo bacula-sd -tc /etc/bacula/bacula-sd.conf"
+se verifican si existen errores de syntax
+
+=============================================================
+Storage {                             # definition of myself
+  Name = BackupServer-sd
+  SDPort = 9103                  # Director's port
+  WorkingDirectory = "/var/lib/bacula"
+  Pid Directory = "/var/run/bacula"
+  Maximum Concurrent Jobs = 20
+  SDAddress = backup_server_private_FQDN
+}
+=============================================================
+Device {
+  Name = FileStorage
+  Media Type = File
+  Archive Device = /bacula/backup
+  LabelMedia = yes;                   # lets Bacula label unlabeled media
+  Random Access = Yes;
+  AutomaticMount = yes;               # when device opened, read it
+  RemovableMedia = no;
+  AlwaysOpen = no;
+}

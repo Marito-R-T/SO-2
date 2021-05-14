@@ -1,0 +1,28 @@
+Estos cambios se hacen sobre el archivo que se encuentra /etc/bacula/bacula-fd.conf
+se puede usar un:
+"sudo nano /etc/bacula/bacula-fd.conf"
+con un 
+"sudo bacula-sd -tc /etc/bacula/bacula-fd.conf"
+se verifican si existen errores de syntax
+
+Director {
+  Name = BackupServer-dir
+  Password = "Y2Q5ODUyMWM0YTFhYjA3NTcwYmU5OTA4Y"
+}
+
+FileDaemon {                          # this is me
+  Name = ClientHost-fd
+  FDAddress = client_private_ip
+  FDport = 9102                  # where we listen for the director
+  WorkingDirectory = /var/spool/bacula
+  Pid Directory = /var/run
+  Maximum Concurrent Jobs = 20
+}
+
+Messages {
+  Name = Standard
+  director =  BackupServer-dir = all, !skipped, !restored
+}
+
+
+

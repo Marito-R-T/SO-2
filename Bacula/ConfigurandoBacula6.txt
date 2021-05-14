@@ -1,0 +1,62 @@
+Estos cambios se hacen sobre el archivo que se encuentra /etc/bacula/conf.d/filesets.conf
+se puede usar un:
+"sudo nano /etc/bacula/conf.d/filesets.conf"
+
+FileSet {
+  Name = "Completo"
+  Include {
+    Options {
+      signature = MD5
+      compression = GZIP
+    }
+    File = /home
+
+  }
+  Exclude {
+    File = /home/archivo_a_ignorar
+    File = /home/archivo_a_ignorar2
+    File = /home/archivo_a_ignorar3
+  }
+}
+=====================================================
+
+Estos cambios se hacen sobre el archivo que se encuentra /etc/bacula/conf.d/clients.conf
+se puede usar un:
+"sudo nano /etc/bacula/conf.d/clients.conf"
+
+Client {
+  Name = ClientHost-fd
+  Address = client_private_FQDN
+  FDPort = 9102
+  Catalog = MyCatalog
+  Password = "Y2Q5ODUyMWM0YTFhYjA3NTcwYmU5OTA4Y"          # password for Remote FileDaemon
+  File Retention = 30 days            # 30 days
+  Job Retention = 6 months            # six months
+  AutoPrune = yes                     # Prune expired Jobs/Files
+}
+
+Job {
+  Name = "BackupClientHost"
+  JobDefs = "DefaultJob"
+  Client = ClientHost-fd
+  Pool = RemoteFile
+  FileSet="Home and Etc"
+  }
+
+
+===========================================================================
+
+stos cambios se hacen sobre el archivo que se encuentra /etc/bacula/conf.d/clients.conf
+se puede usar un:
+"sudo nano /etc/bacula/conf.d/pools.conf"
+
+Pool {
+  Name = RemoteFile
+  Pool Type = Backup
+  Label Format = Remote-
+  Recycle = yes
+  AutoPrune = yes
+  Volume Retention = 365 days
+    Maximum volume Bytes = 50G
+  Maximum Volumes = 100
+}
